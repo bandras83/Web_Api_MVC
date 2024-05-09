@@ -3,18 +3,22 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using AutoMapper;
+using Weather.Model;
 using Weather.MVC.Models;
 
 namespace Weather.MVC.Controllers
 {
 	public class WeatherController : Controller
 	{
+		private readonly IMapper _mapper;
 		private Uri _baseAddress = new Uri("https://localhost:7183");
 		private HttpClient _httpClient;
 
-        public WeatherController()
+        public WeatherController(IMapper mapper)
         {
-            _httpClient = new HttpClient();
+	        _mapper = mapper;
+	        _httpClient = new HttpClient();
 			_httpClient.BaseAddress = _baseAddress;
         }
 
@@ -26,7 +30,8 @@ namespace Weather.MVC.Controllers
 			if (response.IsSuccessStatusCode)
 			{
 				var responseString = response.Content.ReadAsStringAsync().Result;
-				weatherList = JsonConvert.DeserializeObject<List<WeatherViewModel>>(responseString);
+				var weatherModelList = JsonConvert.DeserializeObject<List<WeatherForecast>>(responseString);
+				weatherList = weatherModelList.Select(_mapper.Map<WeatherViewModel>).ToList();
 			}
 
 			return View(weatherList);

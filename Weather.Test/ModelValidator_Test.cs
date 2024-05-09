@@ -1,8 +1,6 @@
-﻿using FluentAssertions;
-using Newtonsoft.Json.Schema.Generation;
+﻿using AutoMapper;
 using NUnit.Framework;
-using Weather.Model;
-using Weather.MVC.Models;
+using Weather.MVC.Mapping;
 
 namespace Weather.Test
 {
@@ -12,12 +10,8 @@ namespace Weather.Test
 		[Test]
 		public void ModelsAreCompatible()
 		{
-			var generator = new JSchemaGenerator();
-			var modelSchema = generator.Generate(typeof(WeatherForecast));
-			var viewModelSchema = generator.Generate(typeof(WeatherViewModel));
-			var s1 = modelSchema.ToString();
-			var s2 = viewModelSchema.ToString();
-			s1.Should().Be(s2);
+			var mapper = new MapperConfiguration(cfg => cfg.AddProfile<WeatherMappingProfile>()).CreateMapper();
+			mapper.ConfigurationProvider.AssertConfigurationIsValid();
 		}
 	}
 }

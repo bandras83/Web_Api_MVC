@@ -1,7 +1,11 @@
+using Weather.MVC.Mapping;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAutoMapper(typeof(WeatherMappingProfile).Assembly);
 
 var app = builder.Build();
 
